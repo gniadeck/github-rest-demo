@@ -34,7 +34,11 @@ public class GitHubDAOImpl implements GitHubDAO{
             response =
                     restTemplate.getForEntity(GITHUB_BASE_URL + "/users/" + username + "/repos", GitHubRepo[].class);
         } catch(HttpClientErrorException e){
-            throw new UsernameNotFoundException(username);
+            if(e.getMessage().contains("404 Not Found")){
+                throw new UsernameNotFoundException(username);
+            } else {
+                throw e;
+            }
         }
 
         return Arrays.asList(response.getBody());
