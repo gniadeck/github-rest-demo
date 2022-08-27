@@ -8,7 +8,7 @@ import java.util.Map;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
-public class GitHubRepository {
+public class GitHubRepo {
     private String name;
     private String ownerLogin;
     private List<GitHubBranch> branches;

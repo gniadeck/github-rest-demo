@@ -7,41 +7,55 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.net.http.HttpConnectTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Repository
 @AllArgsConstructor
-public class GitHubDAOImpl {
+public class GitHubDAOImpl implements GitHubDAO{
 
     private RestTemplate restTemplate;
     private final String GITHUB_BASE_URL = "https://api.github.com";
 
     public List<GitHubRepo> getNonForkedRepositoriesWithBranches(String username){
         List<GitHubRepo> result = fetchRepositoriesOfUser(username);
-        result.forEach(repo -> repo.setBranches(fetchBranchesForRepository(repo)));
-        return removeForkedRepositories(result);
+        result = removeForkedRepositories(result);
+        return fetchBranchesForRepositories(result);
     }
 
     private List<GitHubRepo> fetchRepositoriesOfUser(String username){
-        ResponseEntity<GitHubRepo[]> response =
-                restTemplate.getForEntity(GITHUB_BASE_URL + "/users/" + username + "/repos", GitHubRepo[].class);
 
-        if(response.getStatusCode().equals(HttpStatus.OK)){
-            return Arrays.asList(response.getBody());
-        } else {
+        ResponseEntity<GitHubRepo[]> response;
+        try {
+            response =
+                    restTemplate.getForEntity(GITHUB_BASE_URL + "/users/" + username + "/repos", GitHubRepo[].class);
+        } catch(HttpClientErrorException e){
             throw new UsernameNotFoundException(username);
         }
+
+        return Arrays.asList(response.getBody());
+    }
+
+    private List<GitHubRepo> removeForkedRepositories(List<GitHubRepo> repos){
+        List<GitHubRepo> result = new ArrayList<>(repos);
+        result.removeIf(repo -> repo.getFork() == true);
+        return result;
+    }
+
+    private List<GitHubRepo> fetchBranchesForRepositories(List<GitHubRepo> repos){
+        repos.forEach(repo -> repo.setBranches(fetchBranchesForRepository(repo)));
+        return repos;
     }
 
     private List<GitHubBranch> fetchBranchesForRepository(GitHubRepo gitHubRepo){
 
         ResponseEntity<GitHubBranch[]> response =
-                restTemplate.getForEntity(GITHUB_BASE_URL + "/repos/" + gitHubRepo.getOwnerLogin() + "/" + gitHubRepo.getName() + "/branches", GitHubBranch[].class);
+                restTemplate.getForEntity(GITHUB_BASE_URL + "/repos/" +
+                        gitHubRepo.getOwnerLogin() + "/" + gitHubRepo.getName() + "/branches", GitHubBranch[].class);
 
         if(response.getStatusCode().equals(HttpStatus.OK)){
             return Arrays.asList(response.getBody());
@@ -49,12 +63,6 @@ public class GitHubDAOImpl {
             throw new RuntimeException("Error while fetching branches for repository " + gitHubRepo.getName());
         }
 
-    }
-
-    private List<GitHubRepo> removeForkedRepositories(List<GitHubRepo> repositories){
-        List<GitHubRepo> result = new ArrayList<>(repositories);
-        result.removeIf(repo -> repo.getFork() == true);
-        return result;
     }
 
 }

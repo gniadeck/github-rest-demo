@@ -1,6 +1,5 @@
-package dev.gniadek.githubrestdemo.dto;
+package dev.gniadek.githubrestdemo.dao;
 
-import dev.gniadek.githubrestdemo.dao.GitHubDAO;
 import dev.gniadek.githubrestdemo.domain.github.GitHubRepo;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -10,13 +10,13 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class GitHubApiService {
+public class GitHubApiServiceImpl implements GitHubApiService{
 
     private GitHubDAO gitHubDAO;
     private GitHubDTOMapper gitHubDTOMapper;
 
     public List<GitHubRepositoryDTO> getNonForkedReposForUser(String username){
-        return gitHubDTOMapper.mapRepostiroyList(gitHubDAO.getNonForkedRepositoriesWithBranches(username));
+        return gitHubDTOMapper.mapRepositoryList(gitHubDAO.getNonForkedRepositoriesWithBranches(username));
     }
 
 
