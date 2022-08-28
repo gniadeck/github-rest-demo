@@ -14,7 +14,7 @@ public class GitHubController {
 
     private GitHubApiService githubApiService;
 
-    @GetMapping("/user/{username}/nonforkedrepos")
+    @GetMapping("/user/{username}/non-forked-repos")
     public ResponseEntity<List<GitHubRepositoryDTO>> getNonForkedRepos(@PathVariable("username") String username){
         return ResponseEntity.ok(githubApiService.getNonForkedReposForUser(username));
     }

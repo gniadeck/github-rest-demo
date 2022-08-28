@@ -18,14 +18,15 @@ import static org.mockito.Mockito.when;
 @Slf4j
 public class GitHubApiServiceTest {
 
-    @Autowired
     private GitHubApiService gitHubApiService;
 
     @MockBean
     private GitHubDAO gitHubDAO;
 
-    @MockBean
-    private RestTemplate restTemplate;
+    @Autowired
+    public GitHubApiServiceTest(GitHubApiService gitHubApiService) {
+        this.gitHubApiService = gitHubApiService;
+    }
 
     @Test
     public void getNonForkedReposForUserShouldThrowExceptionOnBadUsername(){
@@ -35,7 +36,6 @@ public class GitHubApiServiceTest {
 
         assertThrows(UsernameNotFoundException.class,
                 () -> gitHubApiService.getNonForkedReposForUser("notreal"));
-
 
     }
 

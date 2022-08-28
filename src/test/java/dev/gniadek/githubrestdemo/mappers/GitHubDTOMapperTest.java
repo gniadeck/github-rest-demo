@@ -15,9 +15,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 public class GitHubDTOMapperTest {
 
-    @Autowired
     private GitHubDTOMapper gitHubDTOMapper;
 
+    @Autowired
+    public GitHubDTOMapperTest(GitHubDTOMapper gitHubDTOMapper) {
+        this.gitHubDTOMapper = gitHubDTOMapper;
+    }
 
     @Test
     public void gitHubDtoMapperShouldMapListOfGitHubRepos(){

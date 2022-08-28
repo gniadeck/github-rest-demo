@@ -13,6 +13,6 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(headerVerifierInterceptor).addPathPatterns("/user/*/nonforkedrepos");
+        registry.addInterceptor(headerVerifierInterceptor).addPathPatterns("/user/*/non-forked-repos");
     }
 }

@@ -16,22 +16,24 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-//@WebMvcTest
 public class GitHubControllerTest {
 
     private MockMvc mockMvc;
-    @Autowired
+
     private WebApplicationContext webApplicationContext;
 
     @MockBean
     private GitHubDAO gitHubDAO;
+
+    @Autowired
+    public GitHubControllerTest(WebApplicationContext webApplicationContext) {
+        this.webApplicationContext = webApplicationContext;
+    }
 
     @BeforeEach
     public void init(){
@@ -47,7 +49,7 @@ public class GitHubControllerTest {
 
 
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/user/notexisting/nonforkedrepos")
+                .perform(MockMvcRequestBuilders.get("/user/notexisting/non-forked-repos")
                         .header("Accept","application/json"))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.status").value(404));
@@ -59,7 +61,7 @@ public class GitHubControllerTest {
     public void nonforkedreposEndpointShouldReturn406OnBadHeader() throws Exception {
 
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/user/notexisting/nonforkedrepos")
+                .perform(MockMvcRequestBuilders.get("/user/notexisting/non-forked-repos")
                         .header("Accept", "application/xml"))
                 .andExpect(status().is(406))
                 .andExpect(jsonPath("$.status").value(406));
@@ -75,7 +77,7 @@ public class GitHubControllerTest {
 
 
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/user/notexisting/nonforkedrepos")
+                .perform(MockMvcRequestBuilders.get("/user/notexisting/non-forked-repos")
                         .header("Accept","application/json"))
                 .andExpect(status().isOk());
 
@@ -91,7 +93,7 @@ public class GitHubControllerTest {
                 .thenReturn(List.of());
 
         MvcResult result = mockMvc
-                .perform(MockMvcRequestBuilders.get("/user/test/nonforkedrepos")
+                .perform(MockMvcRequestBuilders.get("/user/test/non-forked-repos")
                         .header("Accept","application/json"))
                 .andExpect(status().isOk())
                 .andReturn();
